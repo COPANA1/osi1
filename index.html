@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para OSI 🐼</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- TRANSICIÓN DE ENTRADA -->
+  <div id="introOverlay">
+    <div class="curtain-left">
+      <div class="curtain-petals">🌸🌹🌷<br>💕🌺🌸<br>🌹💮🌷</div>
+    </div>
+    <div class="intro-heart">🌹</div>
+    <div class="curtain-right">
+      <div class="curtain-petals">🌷🌸💮<br>🌸💕🌹<br>🌷🌺🌸</div>
+    </div>
+  </div>
+
+  <!-- FONDO ONDAS (canvas) -->
+  <canvas id="waveCanvas"></canvas>
+
+  <div id="stars"></div>
+  <div id="petals"></div>
+
+  <audio id="myAudio">
+    <source src="musica/audio.mpeg" type="audio/mpeg">
+  </audio>
+
+  <div class="card">
+    <span class="orn tl">✦</span>
+    <span class="orn tr">✦</span>
+    <span class="orn bl">✦</span>
+    <span class="orn br">✦</span>
+
+    <span class="heart-big">🌹</span>
+    <h1>Para OSI 🐼</h1>
+    <p class="subtitle-date">San Valentín · Con todo mi amor</p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-heart">♥</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <p class="message">
+      En cada momento contigo, el mundo se vuelve más luminoso.<br>
+      <em>Eres mi lugar favorito, mi calma, mi hogar.</em><br>
+      Gracias por ser exactamente quien eres.
+    </p>
+
+    <!-- MÁQUINA DE ESCRIBIR -->
+    <div class="typewriter-wrap"><span id="typewriter"></span></div>
+
+    <!-- TARJETA QUE SE VOLTEA -->
+    <div class="flip-section">
+      <p class="flip-label">toca para ver el mensaje secreto 🤫</p>
+      <div class="flip-card-wrap">
+        <div class="flip-card" id="flipCard">
+          <div class="flip-front"><p>¿Quieres saber lo que pienso de ti? 💭</p></div>
+          <div class="flip-back"><p>Eres lo mejor que me ha pasado.<br>Te quiero hoy y siempre. ♥</p></div>
+        </div>
+      </div>
+      <p class="flip-hint">toca otra vez para voltear de regreso</p>
+    </div>
+
+    <!-- CARRUSEL -->
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="track">
+        <img src="imagenes/img1.jpg"  alt="Foto 1" onerror="this.src='imagenes/img1.jpeg'">
+        <img src="imagenes/img2.jpeg" alt="Foto 2" onerror="this.src='imagenes/img2.jpg'">
+        <img src="imagenes/img3.jpg"  alt="Foto 3" onerror="this.src='imagenes/img3.jpeg'">
+      </div>
+      <button class="carousel-btn prev" id="btnPrev">&#8249;</button>
+      <button class="carousel-btn next" id="btnNext">&#8250;</button>
+      <div class="carousel-dots" id="dots"></div>
+    </div>
+    <div class="caption-box"><span id="caption"></span></div>
+
+    <!-- PUZZLE DE FOTO -->
+    <div class="puzzle-section">
+      <p class="puzzle-label">🧩 arma el puzzle para ver la foto</p>
+      <p class="puzzle-sub">mueve las piezas — la pieza vacía es el espacio libre</p>
+      <p id="puzzleMoves"></p>
+      <div class="puzzle-container">
+        <div id="puzzleGrid"></div>
+        <div class="puzzle-overlay" id="puzzleOverlay">
+          <p id="puzzleMsg"></p>
+          <button class="puzzle-btn" onclick="initPuzzle(); document.getElementById('puzzleOverlay').style.display='none'">Jugar de nuevo 🔄</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSTELACIONES -->
+    <div class="constellation-section">
+      <p class="constellation-label">nuestra constelación ✨</p>
+      <canvas id="constellationCanvas" width="460" height="130"></canvas>
+    </div>
+
+    <!-- CHAT TRISTE ESTILO WHATSAPP -->
+    <div class="chat-section">
+      <p class="chat-label">💬 dale play para comenzar...</p>
+      <div class="chat-header">
+        <div class="chat-avatar">🐼</div>
+        <div class="chat-contact">
+          <div class="chat-contact-name">OSI</div>
+          <div class="chat-contact-status" id="chatStatus">esperando...</div>
+        </div>
+      </div>
+      <div class="chat-window" id="chatContainer"></div>
+    </div>
+
+    <!-- AUDIO + VISUALIZADOR -->
+    <div class="audio-section">
+      <p class="audio-label">nuestra canción 🎵</p>
+      <button class="audio-btn" id="audioBtn" onclick="toggleAudio()">
+        <span class="audio-icon" id="audioIcon">♪</span>
+        <span id="audioLabel">Reproducir</span>
+      </button>
+      <canvas id="vizCanvas"></canvas>
+    </div>
+
+    <p class="signature">Con todo mi corazón 🧡</p>
+
+    <div class="progress-section">
+      <p class="progress-label">midiendo cuánto te quiero...</p>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <p class="progress-text" id="progressText">cargando...</p>
+    </div>
+    <div class="final-msg" id="finalMsg">Y ♡ ♥ 💕 😘 🤗 !</div>
+  </div>
+
+  <!-- FONDO ONDAS SCRIPT -->
+  <script>
+    const wc = document.getElementById('waveCanvas');
+    const wx = wc.getContext('2d');
+    function resizeWave() { wc.width = window.innerWidth; wc.height = window.innerHeight; }
+    resizeWave();
+    window.addEventListener('resize', resizeWave);
+    let wt = 0;
+    function drawWaves() {
+      wx.clearRect(0, 0, wc.width, wc.height);
+      for (let w = 0; w < 4; w++) {
+        wx.beginPath();
+        const amp = 18 + w * 10;
+        const freq = 0.008 - w * 0.001;
+        const speed = 0.012 + w * 0.004;
+        const yBase = wc.height * (0.3 + w * 0.18);
+        wx.moveTo(0, yBase);
+        for (let x = 0; x <= wc.width; x += 4) {
+          const y = yBase + Math.sin(x * freq + wt * speed + w) * amp;
+          wx.lineTo(x, y);
+        }
+        wx.lineTo(wc.width, wc.height);
+        wx.lineTo(0, wc.height);
+        wx.closePath();
+        const alpha = 0.04 - w * 0.005;
+        wx.fillStyle = `rgba(200, 64, 112, ${alpha})`;
+        wx.fill();
+      }
+      wt++;
+      requestAnimationFrame(drawWaves);
+    }
+    drawWaves();
+  </script>
+
+  <script src="java.js"></script>
+</body>
+</html>
